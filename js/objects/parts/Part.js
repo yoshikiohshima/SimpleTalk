@@ -15,6 +15,8 @@ import {
 class Part {
     constructor(anOwnerPart){
 
+        this.name = this.constructor.name;
+
         // An array of child parts
         this.subparts = [];
 
@@ -188,10 +190,7 @@ class Part {
     }
 
     sendMessage(aMessage, target){
-        if(!target || target == undefined){
-            throw new Error('Messages must be sent with target receivers specified!');
-        }
-        target.receiveMessage(aMessage);
+        window.System.sendMessage(aMessage, this, target);
     }
 
     receiveMessage(aMessage){
