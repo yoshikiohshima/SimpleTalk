@@ -62,6 +62,10 @@ class Field extends Part {
             'wideMargins',
             false
         );
+        this.partProperties.newBasicProp(
+            'textContent',
+            ''
+        );
     }
 
     // Override delegation. Fields should
@@ -70,8 +74,12 @@ class Field extends Part {
     delegateMessage(aMessage){
         this.sendMessage(
             aMessage,
-            this.owner
+            this._owner
         );
+    }
+
+    get type(){
+        return 'field';
     }
 };
 

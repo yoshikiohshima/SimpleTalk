@@ -9,10 +9,10 @@ import Card from './parts/Card.js';
 import Stack from './parts/Stack.js';
 import Background from './parts/Background.js';
 import Button from './parts/Button.js';
-import Field from './parts/Field.js';
 import WorldStack from './parts/WorldStack.js';
 import Window from './parts/Window.js';
 import EricField from './parts/EricField.js';
+import Field from './parts/Field.js';
 
 import WorldView from './views/WorldView.js';
 import StackView from './views/StackView.js';
@@ -22,6 +22,7 @@ import CardView from './views/CardView.js';
 import BackgroundView from './views/BackgroundView.js';
 import WindowView from './views/WindowView';
 import EricFieldView from './views/EricFieldView.js';
+import FieldView from './views/FieldView.js';
 
 import Halo from './views/Halo.js';
 
@@ -639,7 +640,7 @@ System._commandHandlers['openScriptEditor'] = function(targetId){
 
     // Create the EricField model and attach to current card
     // of the new window.
-    let fieldModel = this.newModel('eric-field', currentCard.id);
+    let fieldModel = this.newModel('field', currentCard.id);
     let saveBtnModel = this.newModel('button', currentCard.id);
     saveBtnModel.partProperties.setPropertyNamed(
         saveBtnModel,
@@ -700,11 +701,11 @@ System._commandHandlers['saveHTML'] = function(){
 System.registerPart('card', Card);
 System.registerPart('stack', Stack);
 System.registerPart('background', Background);
-System.registerPart('field', Field);
 System.registerPart('button', Button);
 System.registerPart('world', WorldStack);
 System.registerPart('window', Window);
 System.registerPart('eric-field', EricField);
+System.registerPart('field', Field);
 
 /** Register the initial set of views in the system **/
 System.registerView('button', ButtonView);
@@ -714,6 +715,7 @@ System.registerView('card', CardView);
 System.registerView('background', BackgroundView);
 System.registerView('window', WindowView);
 System.registerView('eric-field', EricFieldView);
+System.registerView('field', FieldView);
 
 
 // Convenience method for adding all of the
