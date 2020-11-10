@@ -38,7 +38,7 @@ describe('Button System Command Tests', () => {
         });
     });
 
-    describe.skip('Adding the button that will be tested', () => {
+    describe('Adding the button that will be tested', () => {
         var buttonModel;
         it('Can add the button via System message', () => {
             let stackEl = document.querySelector('.current-stack');
@@ -46,7 +46,7 @@ describe('Button System Command Tests', () => {
             let msg = {
                 type: "command",
                 commandName: "newModel",
-                args: ["button", card.model.id]
+                args: ["button", cardEl.model.id]
             };
             System.receiveMessage(msg);
             let btnEl = document.querySelector('st-button');

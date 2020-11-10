@@ -11,6 +11,8 @@ import {
     DynamicProperty
 } from '../properties/PartProperties.js';
 
+import Compiler from '../compiler.js';
+
 
 class Part {
     constructor(anOwnerPart){
@@ -266,6 +268,13 @@ class Part {
             // instance as the 'this' context for
             // the handler
             let boundHandler = handler.bind(this);
+            let originalSender;
+            if(aMessage.senders){
+                originalSender = window.System.partsById[aMessage.senders[0].id];
+            }
+            let evaluatedArgs = aMessage.args.map(arg => {
+                return Compiler.evaluate(arg, originalSender);
+            });
             boundHandler(...aMessage.args);
         } else {
             // Otherwise, we have no handler for
