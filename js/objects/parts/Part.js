@@ -53,7 +53,6 @@ class Part {
         this.serialize = this.serialize.bind(this);
         this.setFromDeserialized = this.setFromDeserialized.bind(this);
         this.deleteModelCmdHandler = this.deleteModelCmdHandler.bind(this);
-        //this.setPropertyCmdHandler = this.setPropertyCmdHandler.bind(this);
         this.isSubpartOfCurrentCard = this.isSubpartOfCurrentCard.bind(this);
         this.isSubpartOfCurrentStack = this.isSubpartOfCurrentStack.bind(this);
 
@@ -63,8 +62,6 @@ class Part {
 
         // command handlers
         this.setCmdHandler("deleteModel", this.deleteModelCmdHandler);
-        this.setCmdHandler("newModel", this.newModelCmdHandler);
-        //this.setCmdHandler("setProperty", this.setPropertyCmdHandler);
     }
 
     // Convenience getter to get the id
@@ -320,37 +317,6 @@ class Part {
             commandName: 'deleteModel',
             args: [objectId, modelType]
         });
-    }
-
-    newModelCmdHandler(modelType, ownerId, targetModelType, context, name){
-        let message = {
-            type: 'command',
-            commandName: 'newModel',
-            args: [modelType, ownerId, targetModelType, context, name]
-        };
-        // If the context is explicitely "current" we find the corresponding part
-        // (card or stack) and send the updated message to it
-        // Note: this assumes that the only current parts or cards or stacks
-        if(context === "current"){
-            // we won't need to the context anymore after sending to the corresponding
-            // target part
-            message.args[3] = "";
-            let targetModel;
-            if(targetModelType.toLowerCase() === "card"){
-                targetModel = window.System.getCurrentCardModel();
-            };
-            if(targetModelType.toLowerCase() === "stack"){
-                targetModel = window.System.getCurrentStackModel();
-            };
-            message.args[1] = targetModel.id;
-            return this.sendMessage(message, targetModel);
-        }
-        // if no owner Id is provided and I accept the modelType
-        // as a subpart, then add the new model as a subpart
-        if (this.acceptsSubpart(modelType) && !ownerId){
-            message.args[1] = this.id;
-        }
-        this.delegateMessage(message);
     }
 
     /** Property Subscribers

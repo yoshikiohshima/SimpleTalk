@@ -90,27 +90,15 @@ let simpleTalkSemantics = {
         
     },
 
-    Command_addModel: function(addLiteral, newObject, name, toLiteral, context, targetObjectType, targetObjectId){
-        // TODO: a command like "add card to this stack 20" does not make sense, since you should either designate
-        // the target by context "this" or by id. Here we should throw some sort of uniform error.
-        let args = [];
-        if(context.sourceString && targetObjectId.sourceString){
-            throw "Semantic Error (Add model rule): only one of context or targetObjectId can be provided";
-        }
-        if(context.sourceString === "current" && !["card", "stack"].includes(targetObjectType.sourceString.toLowerCase())){
-            throw "Semantic Error (Add model rule): context 'current' can only apply to 'card' or 'stack' models";
-        }
-        args.push(newObject.sourceString);
-        args.push(targetObjectId.sourceString);
-        args.push(targetObjectType.sourceString);
-        args.push(context.sourceString);
-        name = name.sourceString;
-        // remove the string literal wrapping quotes
-        if (name){
-            name =name.slice(1, name.length - 1);
-        }
-        args.push(name);
-
+    Command_addModel: function(addLiteral, systemObject, nameAsLiteral, toClause){
+        let clause = toClause.parse()[0] || {}; // ToClause will return an array of 1 object
+        let args = [
+            systemObject.sourceString,
+            clause.objectId,
+            clause.objectType,
+            clause.context,
+            nameAsLiteral.parse()
+        ];
         let msg = {
             type: "command",
             commandName: "newModel",
@@ -154,6 +142,10 @@ let simpleTalkSemantics = {
     },
 
     InClause: function(inLiteral, objectSpecifier){
+        return objectSpecifier.parse();
+    },
+
+    ToClause: function(toLiteral, objectSpecifier){
         return objectSpecifier.parse();
     },
 

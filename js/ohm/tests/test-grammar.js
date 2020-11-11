@@ -272,13 +272,13 @@ describe("SimpleTalk Grammar", () => {
                 });
             });
             it ("Bad delete (world)", () => {
-                const s = "delete this world"
-                semanticMatchFailTest(s, "Command_deleteModel")
-                semanticMatchFailTest(s, "Command")
+                const s = "delete this world";
+                semanticMatchFailTest(s, "Command_deleteModel");
+                semanticMatchFailTest(s, "Command");
             });
         });
         describe("Add Model", () => {
-            it ("Basic Add (no id)", () => {
+            it.skip ("Basic Add (no id)", () => {
                 const objects = ["background", "card", "container", "field", "button", "stack", "window"];
                 objects.forEach((d) => {
                     const s = `add ${d} to card`;
@@ -287,7 +287,7 @@ describe("SimpleTalk Grammar", () => {
                     semanticMatchTest(s, "Statement");
                 });
             });
-            it ("Basic Add (wth id)", () => {
+            it.skip ("Basic Add (wth id)", () => {
                 const objects = ["background", "card", "container", "field", "button", "stack", "window"];
                 objects.forEach((d) => {
                     const s = `add ${d} to card 20`;
@@ -314,7 +314,7 @@ describe("SimpleTalk Grammar", () => {
                     semanticMatchTest(s, "Statement");
                 });
             });
-            it ("Basic Add (with name, no id)", () => {
+            it.skip ("Basic Add (with name, no id)", () => {
                 const objects = ["background", "card", "container", "field", "button", "stack", "window"];
                 objects.forEach((d) => {
                     const s = `add ${d} "newPart 123" to card`;
@@ -323,7 +323,7 @@ describe("SimpleTalk Grammar", () => {
                     semanticMatchTest(s, "Statement");
                 });
             });
-            it ("Basic Add (with name, wth id)", () => {
+            it.skip ("Basic Add (with name, wth id)", () => {
                 const objects = ["background", "card", "container", "field", "button", "stack", "window"];
                 objects.forEach((d) => {
                     const s = `add ${d} "newPart 123" to card 20`;

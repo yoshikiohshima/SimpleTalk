@@ -127,6 +127,123 @@ describe("Object Specifier Semantics", () => {
     });
 });
 
+describe("Command addModel Semantics", () => {
+    let availableParts = [
+        'card',
+        'stack',
+        'drawing',
+        'button',
+        'svg'
+    ];
+    describe("Basic without inClause", () => {
+        it("Can parse when adding part without name", () => {
+            availableParts.forEach(partName => {
+                let source = `add ${partName}`;
+                let match = grammar.match(source, 'Command_addModel');
+                assert.isTrue(match.succeeded(), `${partName} did not succeed in match`);
+            });
+        });
+        it("Can apply semantics correctly when adding without name", () => {
+            availableParts.forEach(partName => {
+                let source = `add ${partName}`;
+                let match = grammar.match(source, 'Command_addModel');
+                let result = languageSemantics(match).parse();
+                assert.exists(result);
+                assert.equal(
+                    result.args[0],
+                    partName
+                );
+            });
+        });
+        it("Can parse when adding a part with name", () => {
+            availableParts.forEach(partName => {
+                let source = `add ${partName} "name"`;
+                let match = grammar.match(source, "Command_addModel");
+                assert.isTrue(match.succeeded(), `${partName} match failed`);
+            });
+        });
+        it("Can apply semantics correctly when adding with name", () => {
+            availableParts.forEach(partName => {
+                let source = `add ${partName} "name"`;
+                let match = grammar.match(source, "Command_addModel");
+                let result = languageSemantics(match).parse();
+                assert.exists(result);
+                assert.equal(
+                    result.args[0],
+                    partName
+                );
+                assert.equal(
+                    result.args[4],
+                    "name"
+                );
+            });
+        });
+    });
+
+    describe("With inClause", () => {
+        describe("by part id", () => {
+            it("Can parse when adding without name", () => {
+                availableParts.forEach(partName => {
+                    let source = `add ${partName} to part 13`;
+                    let match = grammar.match(source, "Command_addModel");
+                    assert.isTrue(match.succeeded(), `${partName} match failed`);
+                });
+            });
+            it("Can apply semantics correctly when adding without name", () => {
+                availableParts.forEach(partName => {
+                    let source = `add ${partName} to part 13`;
+                    let match = grammar.match(source, "Command_addModel");
+                    let result = languageSemantics(match).parse();
+                    assert.exists(result);
+                    assert.equal(
+                        result.args[0],
+                        partName
+                    );
+                    assert.equal(
+                        result.args[1],
+                        "13"
+                    );
+                    assert.equal(
+                        result.args[2],
+                        'part'
+                    );
+                });
+            });
+            it("Can parse when adding with name", () => {
+                availableParts.forEach(partName => {
+                    let source = `add ${partName} "named" to part 13`;
+                    let match = grammar.match(source, "Command_addModel");
+                    assert.isTrue(match.succeeded(), `${partName} match failed`);
+                });
+            });
+            it("Can apply semantics correctly when adding with a name", () => {
+                availableParts.forEach(partName => {
+                    let source = `add ${partName} "named" to part 13`;
+                    let match = grammar.match(source, "Command_addModel");
+                    let result = languageSemantics(match).parse();
+                    assert.exists(result);
+                    assert.equal(
+                        result.args[0],
+                        partName
+                    );
+                    assert.equal(
+                        result.args[1],
+                        '13'
+                    );
+                    assert.equal(
+                        result.args[2],
+                        'part'
+                    );
+                    assert.equal(
+                        result.args[4],
+                        "named"
+                    );
+                });
+            });
+        });
+    });
+});
+
 describe("Command setProperty Semantics", () => {
     describe("Basic without inClause", () => {
         it('Can parse when setting a string literal', () => {

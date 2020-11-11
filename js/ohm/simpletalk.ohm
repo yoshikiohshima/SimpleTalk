@@ -58,12 +58,15 @@
         InClause (a in clause)
                 = "in" ObjectSpecifier
 
+        ToClause (a to clause)
+                = "to" ObjectSpecifier
+
 	Command (a command statement)
    		= "go to" ("next" | "previous") systemObject --goToDirection
    		| "go to" systemObject objectId --goToByReference
 		| "answer" (stringLiteral | variableName) --answer
 		| "delete" "this"? systemObject objectId? --deleteModel
-		| "add" systemObject stringLiteral? "to"? ("this" | "current")? systemObject? objectId? --addModel
+		| "add" systemObject stringLiteral? ToClause? --addModel
 		| "set" stringLiteral "to" (stringLiteral | variableName) InClause? --setProperty
                 | "put" anyLiteral "into" variableName --putVariable
 		| command_arbitrary
@@ -72,7 +75,7 @@
 		= letter+
 
 	systemObject (system object such as card, stack etc)
-		= ("c" | "C") "ontainer" | ("b"| "B") "ackground" | ("b" | "B") "utton" | ("c" | "C") "ard" | ("f" | "F") "ield" | ("s" | "S") "tack" | ("w" | "W") "indow"
+		= ("c" | "C") "ontainer" | ("b"| "B") "ackground" | ("b" | "B") "utton" | ("c" | "C") "ard" | ("f" | "F") "ield" | ("s" | "S") "tack" | ("w" | "W") "indow" | ("d" | "D") "rawing" | ("S" | "s") "vg"
 
 	// TODO do we want to restrict message names (start with lowercase etc)?
 	// Note: we prevent keyword overloading

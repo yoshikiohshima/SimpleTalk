@@ -328,12 +328,32 @@ const System = {
         }
     },
 
-    newModel(kind, ownerId, ownerKind, context, name){
-        // Lookup the instance of the model that
-        // matches the owner's id
-        let ownerPart = this.partsById[ownerId];
-        if(!ownerPart || ownerPart == undefined){
-            throw new Error(`System could not locate owner part with id ${ownerId}`);
+    newModel(kind, targetId, targetKind, context, name, senders){
+        let target;
+        let originalSender = senders[0].id;
+
+        if(context == 'current'){
+            // If the context is 'current', this means
+            // we want to add a part to the current
+            // card or stack
+            if(targetKind == 'card'){
+                target = this.getCurrentCardModel();
+            } else if(targetKind == 'stack'){
+                target = this.getCurrentStackModel();
+            }
+        } else if(targetId){
+            // Otherwise, if there is an objectId, we are
+            // adding a part to a specific part by
+            // an id
+            target = this.partsById[targetId];
+        } else {
+            // Otherwise we are adding the new part to
+            // the part that originally sent the message
+            target = this.partsById[originalSender];
+        }
+
+        if(!target){
+            throw new Error(`Could not find addModel target!`);
         }
 
         // Find the class constructor for the kind of
@@ -343,7 +363,7 @@ const System = {
         if(!modelClass){
             throw new Error(`Cannot create unknown part type: ${kind}`);
         }
-        let model = new modelClass(ownerPart);
+        let model = new modelClass(targetPart);
         if(name){
             model.partProperties.setPropertyNamed(model, 'name', name);
         }
@@ -361,9 +381,9 @@ const System = {
         // the newly created part model,
         // add the new model to the owner's
         // subparts list
-        if(ownerPart){
-            ownerPart.addPart(model);
-            this.updateSerialization(ownerPart.id);
+        if(targetPart){
+            targetPart.addPart(model);
+            this.updateSerialization(targetPart.id);
         }
 
         // Add the System as a property subscriber to
@@ -387,25 +407,6 @@ const System = {
 
         return model;
     },
-
-    // setProperty(property, value, ownerId){
-    //     let ownerPart = this.partsById[ownerId];
-    //     if(!ownerPart || ownerPart == undefined){
-    //         throw new Error(`System could not locate owner part with id ${ownerId}`);
-    //     }
-    //     ownerPart.partProperties.setPropertyNamed(ownerPart, property, value);
-    //     // for now stack properties propagate down to their direct card children
-    //     // TODO this should be refactored within a better lifecycle model and potenitally
-    //     // use dynamic props. A similar propagation should probably exist for world -> stacks,
-    //     // window -> subpart etc
-    //     if(ownerPart.type === "stack"){
-    //         ownerPart.subparts.forEach((subpart) => {
-    //             if(subpart.type === "card"){
-    //                 subpart.partProperties.setPropertyNamed(subpart, property, value);
-    //             }
-    //         });
-    //     }
-    // },
 
     setProperty(propName, value, objectId, objectType, context, senders){
         let target;
