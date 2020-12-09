@@ -7,6 +7,11 @@ import PartView from './PartView.js';
 
 const templateString = `
 <style>
+:host {
+  display: block;
+  position: absolute;
+  border: 1px solid black;
+}
 </style>
 <canvas id="vision-canvas"></canvas>
 `;
@@ -29,6 +34,7 @@ class VisionFieldView extends PartView {
         this.setupPropHandlers = this.setupPropHandlers.bind(this);
         this.renderCoordinates = this.renderCoordinates.bind(this);
         this.clearCanvas = this.clearCanvas.bind(this);
+        this.onClick = this.onClick.bind(this);
 
         // Set up the prop handlers
         this.setupPropHandlers();
@@ -40,6 +46,12 @@ class VisionFieldView extends PartView {
 
     afterConnected(){
         this.canvas = this._shadowRoot.getElementById('vision-canvas');
+        this.addEventListener('click', this.onClick);
+        
+    }
+
+    afterDisconnected(){
+        this.removeEventListener('click', this.onClick);
     }
 
     afterModelSet(){
@@ -82,6 +94,18 @@ class VisionFieldView extends PartView {
             context = this.canvas.getContext('2d');
         }
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    onClick(event){
+        if(event.shiftKey && event.button == 0){
+            event.preventDefault();
+            event.stopPropagation();
+            if(this.hasOpenHalo){
+                this.closeHalo();
+            } else {
+                this.openHalo();
+            }
+        }
     }
 }
 
