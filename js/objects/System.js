@@ -14,6 +14,7 @@ import Window from './parts/Window.js';
 import Container from './parts/Container.js';
 import Drawing from './parts/Drawing.js';
 import Svg from './parts/Svg.js';
+import VisionField from './parts/VisionField.js';
 
 import WorldView from './views/WorldView.js';
 import StackView from './views/StackView.js';
@@ -25,6 +26,7 @@ import FieldView from './views/FieldView.js';
 import ContainerView from './views/ContainerView.js';
 import DrawingView from './views/drawing/DrawingView.js';
 import SvgView from './views/SvgView.js';
+import VisionFieldView from './views/VisionFieldView.js';
 
 import Halo from './views/Halo.js';
 
@@ -1310,6 +1312,7 @@ System.registerPart('field', Field);
 System.registerPart('container', Container);
 System.registerPart('drawing', Drawing);
 System.registerPart('svg', Svg);
+System.registerPart('vision-field', VisionField);
 
 /** Register the initial set of views in the system **/
 System.registerView('button', ButtonView);
@@ -1321,6 +1324,7 @@ System.registerView('field', FieldView);
 System.registerView('container', ContainerView);
 System.registerView('drawing', DrawingView);
 System.registerView('svg', SvgView);
+System.registerView('vision-field', VisionFieldView);
 
 
 // Convenience method for adding all of the
