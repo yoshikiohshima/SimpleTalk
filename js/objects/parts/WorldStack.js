@@ -32,9 +32,93 @@ class WorldStack extends Part {
             -1
         );
 
+        this.partProperties.newBasicProp(
+            'cursorPosition',
+            []
+        );
+        this.partProperties.newBasicProp(
+            'useVisionCursor',
+            false
+        );
+
         // Set the id property to always
         // be 'world'
         this.id = 'world';
+
+        // Initialize the VisionWorker, but do
+        // not start it yet
+        this.visionWorker = new Worker('../VisionWorker.js');
+
+        // Bind methods
+        this.onVisionMessage = this.onVisionMessage.bind(this);
+        this.visionWorker.onmessage = (event) => {
+            this.onVisionMessage(event.data);
+        };
+    }
+
+    propertyChanged(propertyName, newValue){
+        if(propertyName == 'useVisionCursor'){
+            this.toggleVisionCursor(newValue);
+        }
+        let message = {
+            type: 'propertyChanged',
+            propertyName: propertyName,
+            value: newValue,
+            partId: this.id
+        };
+        this._propertySubscribers.forEach(subscriber => {
+            this.sendMessage(message, subscriber);
+        });
+    }
+
+    toggleVisionCursor(shouldTurnOn){
+        if(shouldTurnOn){
+            this.visionWorker.postMessage({
+                type: 'start',
+                url: 'http://localhost:5000',
+                pollTime: 60
+            });
+        } else {
+            this.visionWorker.postMessage({
+                type: 'stop'
+            });
+        }
+    }
+
+    onVisionMessage(message){
+        switch(message.type){
+        case 'stopped':
+            this.partProperties.setPropertyNamed(
+                this,
+                'useVisionCursor',
+                false
+            );
+            break;
+        case 'coordinate':
+            this.partProperties.setPropertyNamed(
+                this,
+                'cursorPosition',
+                message.coordinate
+            );
+            break;
+        case 'empty':
+            this.partProperties.setPropertyNamed(
+                this,
+                'cursorPosition',
+                []
+            );
+            break;
+        case 'error':
+            this.partProperties.setPropertyNamed(
+                this,
+                'useVisionCursor',
+                false
+            );
+            this.sendMessage(message, this);
+            break;
+        default:
+            this.sendMessage(message, this);
+        }
     }
 
     get type(){

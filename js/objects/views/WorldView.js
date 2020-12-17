@@ -26,7 +26,20 @@ const templateString = `
                  #available-stacks > st-stack.current-stack {
                      display: inherit;
                  }
+                 #vision-cursor {
+                     display: none;
+                     width: 20px;
+                     height: 20px;
+                     background-color: red;
+                     box-shadow: 0px 0px 1px 12px rgba(100, 100, 100, 0.5);
+                 }
+                 #vision-cursor.active {
+                     display: block;
+                     position: absolute;
+                     z-index: 1000;
+                 }
                 </style>
+                <div id="vision-cursor"></div>
                 <div id="available-stacks">
                     <slot></slot>
                 </div>
@@ -50,6 +63,8 @@ class WorldView extends PartView {
         this.updateCurrentStack = this.updateCurrentStack.bind(this);
         this.receiveMessage = this.receiveMessage.bind(this);
         this.setupPropHandlers = this.setupPropHandlers.bind(this);
+        this.updateCursorPosition = this.updateCursorPosition.bind(this);
+        this.updateToggleVisionCursor = this.updateToggleVisionCursor.bind(this);
 
         // Setup prop handlers
         this.setupPropHandlers();
@@ -57,6 +72,8 @@ class WorldView extends PartView {
 
     setupPropHandlers(){
         this.onPropChange('currentStack', this.updateCurrentStack);
+        this.onPropChange('cursorPosition', this.updateCursorPosition);
+        this.onPropChange('useVisionCursor', this.updateToggleVisionCursor);
     }
 
     afterConnected(){
@@ -100,6 +117,32 @@ class WorldView extends PartView {
         if(nextStackView){
             nextStackView.classList.add('current-stack');
         }
+    }
+
+    updateToggleVisionCursor(shouldShowCursor){
+        console.log(`Toggling useVisionCursor in view to ${shouldShowCursor}`);
+        let cursor = this._shadowRoot.getElementById('vision-cursor');
+        if(shouldShowCursor){
+            cursor.classList.add('active');
+        } else {
+            cursor.classList.remove('active');
+        }
+    }
+
+    updateCursorPosition(coordinateInfo){
+        if(coordinateInfo.length == 0){
+            return;
+        }
+        let newX = coordinateInfo[0];
+        let xPercentage = newX / 848;
+        let newY = coordinateInfo[1];
+        let yPercentage = newY / 480;
+        let cursor = this._shadowRoot.getElementById('vision-cursor');
+        let box = this.getBoundingClientRect();
+        let adjustedX = Math.floor(xPercentage * box.width);
+        let adjustedY = Math.floor(yPercentage * box.height);
+        cursor.style.top = `${adjustedY}px`;
+        cursor.style.left = `${adjustedX}px`;
     }
 
     goToNextStack(){
